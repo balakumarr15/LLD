@@ -1,45 +1,39 @@
-package main
+package proxy
 
 import "fmt"
 
+// Server defines the interface for handling requests.
 type Server interface {
-	handleRequest(url string) string
+	HandleRequest(url string) (string, error)
 }
 
-type Application struct {
+// Application is the real server that handles requests.
+type Application struct{}
+
+func (app *Application) HandleRequest(url string) (string, error) {
+	return url + " - Success", nil
 }
 
-func (app *Application) handleRequest(url string) string {
-	return url + " - Success"
-}
-
+// Proxy wraps a Server and enforces a per-URL rate limit.
 type Proxy struct {
 	app          Server
-	ratelimitMap map[string]int
+	maxRequests  int
+	rateLimitMap map[string]int
 }
 
-func (proxy *Proxy) handleRequest(url string) string {
-	if ratelimit, ok := proxy.ratelimitMap[url]; ok {
-		proxy.ratelimitMap[url]++
-		if ratelimit >= 1 && ratelimit < 2 {
-			return proxy.app.handleRequest(url)
-		} else {
-			panic("rate limit exceeded")
-		}
-	} else {
-		proxy.ratelimitMap[url] = 1
+// NewProxy creates a proxy with the given rate limit per URL.
+func NewProxy(app Server, maxRequests int) *Proxy {
+	return &Proxy{
+		app:          app,
+		maxRequests:  maxRequests,
+		rateLimitMap: make(map[string]int),
 	}
-
-	return proxy.app.handleRequest(url)
 }
 
-func main() {
-	app := Application{}
-	proxy := Proxy{app: &app, ratelimitMap: make(map[string]int)}
-
-	fmt.Println(proxy.handleRequest("http://www.baidu.com"))
-	fmt.Println(proxy.handleRequest("http://www.baidu.com"))
-	fmt.Println(proxy.handleRequest("http://www.baidu.com"))
-	fmt.Println(proxy.handleRequest("http://www.baidu.com"))
-	// TODO make it proper using antigravity before pushing it to git
+func (p *Proxy) HandleRequest(url string) (string, error) {
+	p.rateLimitMap[url]++
+	if p.rateLimitMap[url] > p.maxRequests {
+		return "", fmt.Errorf("rate limit exceeded for %s", url)
+	}
+	return p.app.HandleRequest(url)
 }
