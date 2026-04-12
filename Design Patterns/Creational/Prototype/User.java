@@ -1,6 +1,6 @@
 package prototype;
 
-public class User implements ObjectClonable {
+public class User implements ObjectClonable, Cloneable {
     private int userId;
     private String username;
     private String email;
@@ -17,7 +17,11 @@ public class User implements ObjectClonable {
 
     @Override
     public User clone() {
-        return new User(userId, username, email, displayName, age);
+        try {
+            return (User) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public int getUserId() { return userId; }
