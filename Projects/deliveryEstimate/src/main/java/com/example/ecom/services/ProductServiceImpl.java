@@ -24,13 +24,13 @@ public class ProductServiceImpl implements ProductService {
     private final GoogleMapsAdapter googleMapsAdapter;
 
     public ProductServiceImpl(AddressRepository addressRepository, DeliveryHubRepository deliveryHubRepository,
-            ProductRepository productRepository, SellerRepository sellerRepository, UserRepository userRepository) {
+            ProductRepository productRepository, SellerRepository sellerRepository, UserRepository userRepository, GoogleMapsAdapter googleMapsAdapter) {
         this.addressRepository = addressRepository;
         this.deliveryHubRepository = deliveryHubRepository;
         this.productRepository = productRepository;
         this.sellerRepository = sellerRepository;
         this.userRepository = userRepository;
-        this.googleMapsAdapter = new GoogleMapsAdapter();
+        this.googleMapsAdapter = googleMapsAdapter;
     }
 
 
