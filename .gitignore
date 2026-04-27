@@ -2,3 +2,4 @@
 .claude/
 *.class
 out/
+lib/*.jar

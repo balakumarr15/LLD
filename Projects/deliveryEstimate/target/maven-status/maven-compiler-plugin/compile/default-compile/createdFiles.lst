@@ -1,0 +1,6 @@
+com/example/ecom/models/User.class
+com/example/ecom/models/Seller.class
+com/example/ecom/models/Address.class
+com/example/ecom/models/Product.class
+com/example/ecom/repositories/AddressRepository.class
+com/example/ecom/models/BaseModel.class
